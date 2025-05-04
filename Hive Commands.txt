@@ -1,0 +1,57 @@
+[cloudera@quickstart ~]$ hive
+
+hive> create database mydb2;
+hive> use mydb2;
+
+hive> create table flight(fno int,year int,dest varchar(10),dealy float);
+
+hive> alter table flight rename to air_flight;
+
+hive> alter table air_flight add columns(source varchar(10));
+
+hive> drop table flight;
+
+hive> desc air_flight;
+
+*********************** create external text file in cloudera home and paste the following data in it*************************************************************
+
+hive> create table flight(fno int,year int,dest varchar(10),delay float)
+    > row format delimited
+    > fields terminated by ','
+    > lines terminated by '\n'
+    > stored as textfile;
+
+
+hive> insert into flight values(123,2009,'mumbai',30.6);
+
+hive> insert into flight values(124,2008,'pune',50.6);
+
+hive> select * from flight;
+
+hive> load data local inpath "f.txt"
+    > overwrite into table flight;
+
+hive> select * from flight;
+
+hive> create table nflight(fno int,year int,source varchar(10))
+    > row format delimited
+    > fields terminated by ','
+    > lines terminated by '\n'
+    > stored as textfile;
+
+hive> select * from flight;
+
+hive> insert into nflight values(923,2009,'pune');
+
+hive> select a.fno,a.year,a.dest,a.delay,b.source
+    > from flight a join nflight b
+    > on (a.fno=b.fno);
+
+hive> select * from nflight;
+
+hive> select * from flight;
+
+hive> create index flight_index on table flight(fno)
+    > as 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler'
+    > WITH DEFERRED REBUILD;
+hive> show tables;
